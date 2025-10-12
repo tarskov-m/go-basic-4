@@ -5,7 +5,11 @@ import (
 	"os"
 )
 
-// функция для чтения файла.
+/*
+*
+ReadFile читает содержимое файла "test.txt" и выводит его на экран.
+В случае ошибки проверяет, существует ли файл, и выводит соответствующее сообщение.
+*/
 func ReadFile() {
 	data, err := os.ReadFile("test.txt")
 	if err != nil {
@@ -19,7 +23,16 @@ func ReadFile() {
 	fmt.Println(string(data))
 }
 
-// функция для записи в файл.
+/*
+*
+WriteFile записывает переданное содержимое в файл с указанным именем.
+Создаёт новый файл или перезаписывает существующий.
+После записи файл автоматически закрывается.
+
+Parameters:
+  - content string - данные для записи в файл
+  - name string - имя целевого файла
+*/
 func WriteFile(content string, name string) {
 	file, err := os.Create(name)
 	if err != nil {
@@ -29,7 +42,6 @@ func WriteFile(content string, name string) {
 	defer file.Close()
 	_, err = file.WriteString(content)
 	if err != nil {
-
 		fmt.Println(err)
 		return
 	}
