@@ -7,7 +7,16 @@ import (
 
 // функция для чтения файла.
 func ReadFile() {
-
+	data, err := os.ReadFile("test.txt")
+	if err != nil {
+		if err == os.ErrNotExist {
+			fmt.Println("Файл не найден")
+		} else {
+			fmt.Println(err)
+		}
+		return
+	}
+	fmt.Println(string(data))
 }
 
 // функция для записи в файл.
