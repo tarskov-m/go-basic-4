@@ -1,6 +1,8 @@
+// Package account
 package account
 
 import (
+	"encoding/json"
 	"errors"
 	"math/rand/v2"
 	"net/url"
@@ -14,23 +16,25 @@ var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12
 
 // Account представляет учетную запись с логином, паролем и URL
 type Account struct {
-	login    string
-	password string
-	url      string
-}
-
-// accountWithTimeStamp - расширенная структура учетной записи с временными
-// метками содержит встроенный Account и дополнительные поля времени создания
-// обновления
-type accountWithTimeStamp struct {
-	createdAt time.Time
-	updatedAt time.Time
-	Account
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	Url       string    `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 // OutputPassword выводит логин в цвете циан
 func (acc *Account) OutputPassword() {
-	color.Cyan(acc.login)
+	color.Cyan(acc.Login)
+}
+
+func (acc *Account) ToBytes() ([]byte, error) {
+	file, err := json.Marshal(acc)
+	if err != nil {
+		return nil, err
+	} else {
+		return file, nil
+	}
 }
 
 // generatePassword генерирует случайный пароль заданной длины
@@ -40,19 +44,19 @@ func (acc *Account) generatePassword(n int) {
 	for i := range res {
 		res[i] = letterRunes[rand.IntN(len(letterRunes))]
 	}
-	acc.password = string(res)
+	acc.Password = string(res)
 }
 
-// NewAccountWithTimeStamp создает новую учетную запись с временными метками
+// NewAccount создает новую учетную запись с временными метками
 // Параметры:
 //   - login: строка логина (не может быть пустой)
 //   - password: строка пароля (если пустая, будет сгенерирован)
 //   - urlString: строка URL (должна быть валидным URI)
 //
 // Возвращает:
-//   - *accountWithTimeStamp: указатель на созданную учетную запись
+//   - *Account: указатель на созданную учетную запись
 //   - error: ошибку, если входные данные некорректны
-func NewAccountWithTimeStamp(login, password, urlString string) (*accountWithTimeStamp, error) {
+func NewAccount(login, password, urlString string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")
 	}
@@ -60,14 +64,12 @@ func NewAccountWithTimeStamp(login, password, urlString string) (*accountWithTim
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
-	newAcc := &accountWithTimeStamp{
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		Account: Account{
-			url:      urlString,
-			login:    login,
-			password: password,
-		},
+	newAcc := &Account{
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Url:       urlString,
+		Login:     login,
+		Password:  password,
 	}
 	if password == "" {
 		newAcc.generatePassword(12)
