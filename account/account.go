@@ -17,7 +17,7 @@ var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ12
 type Account struct {
 	Login     string    `json:"login"`
 	Password  string    `json:"password"`
-	Url       string    `json:"url"`
+	URL       string    `json:"url"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -57,7 +57,7 @@ func NewAccount(login, password, urlString string) (*Account, error) {
 	newAcc := &Account{
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
-		Url:       urlString,
+		URL:       urlString,
 		Login:     login,
 		Password:  password,
 	}
