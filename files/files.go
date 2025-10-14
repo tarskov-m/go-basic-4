@@ -8,17 +8,17 @@ import (
 
 // ReadFile читает содержимое файла "test.txt" и выводит его на экран.
 // В случае ошибки проверяет, существует ли файл, и выводит соответствующее сообщение.
-func ReadFile() {
-	data, err := os.ReadFile("test.txt")
+func ReadFile(name string) ([]byte, error) {
+	data, err := os.ReadFile(name)
 	if err != nil {
 		if err == os.ErrNotExist {
 			fmt.Println("Файл не найден")
 		} else {
 			fmt.Println(err)
 		}
-		return
+		return nil, err
 	}
-	fmt.Println(string(data))
+	return data, nil
 }
 
 // WriteFile записывает переданное содержимое в файл с указанным именем.

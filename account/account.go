@@ -22,9 +22,11 @@ type Account struct {
 	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-// OutputPassword выводит логин в цвете циан
-func (acc *Account) OutputPassword() {
+// Output выводит логин, пароль и урл в цвете циан
+func (acc *Account) Output() {
 	color.Cyan(acc.Login)
+	color.Cyan(acc.Password)
+	color.Cyan(acc.URL)
 }
 
 // generatePassword генерирует случайный пароль заданной длины

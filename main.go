@@ -5,18 +5,21 @@ import (
 
 	"demo/password/account"
 	"demo/password/files"
+
+	"github.com/fatih/color"
 )
 
 func main() {
 	fmt.Println("___ Менеджер паролей ___")
+	vault := account.NewVault()
 Menu:
 	for {
 		variant := GetMenu()
 		switch variant {
 		case 1:
-			createAccount()
+			createAccount(vault)
 		case 2:
-			findAccount()
+			findAccount(vault)
 		case 3:
 			deleteAccount()
 		default:
@@ -37,7 +40,15 @@ func GetMenu() int {
 	return variant
 }
 
-func findAccount() {
+func findAccount(vault *account.Vault) {
+	url := promptData("Введите URL")
+	accaunts := vault.FindAccountsByURL(url)
+	if len(accaunts) == 0 {
+		color.Red("Не найдено")
+	}
+	for _, account := range accaunts {
+		account.Output()
+	}
 }
 
 func deleteAccount() {
@@ -53,7 +64,7 @@ func deleteAccount() {
 // - Проверяет корректность формата URL и логина через метод NewAccount
 // - В случае ошибки выводит диагностическое сообщение и завершает работу
 // - Результирующий JSON записывается в файл с помощью метода WriteFile
-func createAccount() {
+func createAccount(vault *account.Vault) {
 	login := promptData("Введите логин")
 	password := promptData("Введите пароль")
 	url := promptData("Введите URL")
@@ -62,7 +73,6 @@ func createAccount() {
 		fmt.Println("Неверный формат URL или Логин")
 		return
 	}
-	vault := account.NewVault()
 	vault.AddAccount(*myAccount)
 	data, err := vault.ToBytes()
 	if err != nil {
