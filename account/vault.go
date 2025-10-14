@@ -46,14 +46,25 @@ func (vault *Vault) FindAccountsByURL(url string) []Account {
 	return accounts
 }
 
+func (vault *Vault) DeleteAccountByURL(url string) bool {
+	var accounts []Account
+	isDeleted := false
+	for _, account := range vault.Accounts {
+		isMatched := strings.Contains(account.URL, url)
+		if !isMatched {
+			accounts = append(accounts, account)
+		} else {
+			isDeleted = true
+		}
+	}
+	vault.Accounts = accounts
+	vault.save()
+	return isDeleted
+}
+
 func (vault *Vault) AddAccount(account Account) {
 	vault.Accounts = append(vault.Accounts, account)
-	vault.UpdatedAt = time.Now()
-	data, err := vault.ToBytes()
-	if err != nil {
-		color.Red("Не удалось преобразовать")
-	}
-	files.WriteFile(data, "data.json")
+	vault.save()
 }
 
 func (vault *Vault) ToBytes() ([]byte, error) {
@@ -63,4 +74,13 @@ func (vault *Vault) ToBytes() ([]byte, error) {
 	} else {
 		return file, nil
 	}
+}
+
+func (vault *Vault) save() {
+	vault.UpdatedAt = time.Now()
+	data, err := vault.ToBytes()
+	if err != nil {
+		color.Red("Не удалось преобразовать")
+	}
+	files.WriteFile(data, "data.json")
 }

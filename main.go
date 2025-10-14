@@ -21,7 +21,7 @@ Menu:
 		case 2:
 			findAccount(vault)
 		case 3:
-			deleteAccount()
+			deleteAccount(vault)
 		default:
 			break Menu
 		}
@@ -51,7 +51,13 @@ func findAccount(vault *account.Vault) {
 	}
 }
 
-func deleteAccount() {
+func deleteAccount(vault *account.Vault) {
+	url := promptData("Введите URL")
+	if vault.DeleteAccountByURL(url) {
+		color.Green("Удалено")
+	} else {
+		color.Red("Не найдено")
+	}
 }
 
 // Создает новый аккаунт на основе вводных данных пользователя
