@@ -6,17 +6,17 @@ import (
 	"os"
 )
 
-type JsonDb struct {
+type JSONDB struct {
 	filename string
 }
 
-func NewJsonDb(name string) *JsonDb {
-	return &JsonDb{
+func NewJSONDB(name string) *JSONDB {
+	return &JSONDB{
 		filename: name,
 	}
 }
 
-func (db JsonDb) Read() ([]byte, error) {
+func (db JSONDB) Read() ([]byte, error) {
 	data, err := os.ReadFile(db.filename)
 	if err != nil {
 		if err == os.ErrNotExist {
@@ -29,7 +29,7 @@ func (db JsonDb) Read() ([]byte, error) {
 	return data, nil
 }
 
-func (db JsonDb) Write(content []byte) {
+func (db JSONDB) Write(content []byte) {
 	file, err := os.Create(db.filename)
 	if err != nil {
 		fmt.Println(err)
