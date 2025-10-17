@@ -6,10 +6,18 @@ import (
 	"os"
 )
 
-// ReadFile читает содержимое файла "test.txt" и выводит его на экран.
-// В случае ошибки проверяет, существует ли файл, и выводит соответствующее сообщение.
-func ReadFile(name string) ([]byte, error) {
-	data, err := os.ReadFile(name)
+type JsonDb struct {
+	filename string
+}
+
+func NewJsonDb(name string) *JsonDb {
+	return &JsonDb{
+		filename: name,
+	}
+}
+
+func (db JsonDb) Read() ([]byte, error) {
+	data, err := os.ReadFile(db.filename)
 	if err != nil {
 		if err == os.ErrNotExist {
 			fmt.Println("Файл не найден")
@@ -21,15 +29,8 @@ func ReadFile(name string) ([]byte, error) {
 	return data, nil
 }
 
-// WriteFile записывает переданное содержимое в файл с указанным именем.
-// Создаёт новый файл или перезаписывает существующий.
-// После записи файл автоматически закрывается.
-//
-// Parameters:
-//   - content string - данные для записи в файл
-//   - name string - имя целевого файла
-func WriteFile(content []byte, name string) {
-	file, err := os.Create(name)
+func (db JsonDb) Write(content []byte) {
+	file, err := os.Create(db.filename)
 	if err != nil {
 		fmt.Println(err)
 		return

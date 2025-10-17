@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"demo/password/account"
-	"demo/password/files"
 
 	"github.com/fatih/color"
 )
@@ -80,12 +79,6 @@ func createAccount(vault *account.Vault) {
 		return
 	}
 	vault.AddAccount(*myAccount)
-	data, err := vault.ToBytes()
-	if err != nil {
-		fmt.Println("Не удалось преобразовать в JSON")
-		return
-	}
-	files.WriteFile(data, "data.json")
 }
 
 func promptData(prompt string) string {
