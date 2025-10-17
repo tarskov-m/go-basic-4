@@ -1,3 +1,4 @@
+// Package account
 package account
 
 import (
@@ -9,33 +10,45 @@ import (
 	"github.com/fatih/color"
 )
 
+// letterRunes содержит символы для генерации случайных паролей
 var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890-*!")
 
+// Account представляет учетную запись с логином, паролем и URL
 type Account struct {
-	login    string
-	password string
-	url      string
+	Login     string    `json:"login"`
+	Password  string    `json:"password"`
+	URL       string    `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
 }
 
-type accountWithTimeStamp struct {
-	createdAt time.Time
-	updatedAt time.Time
-	Account
+// Output выводит логин, пароль и урл в цвете циан
+func (acc *Account) Output() {
+	color.Cyan(acc.Login)
+	color.Cyan(acc.Password)
+	color.Cyan(acc.URL)
 }
 
-func (acc *Account) OutputPassword() {
-	color.Cyan(acc.login)
-}
-
+// generatePassword генерирует случайный пароль заданной длины
+// использует символы из letterRunes
 func (acc *Account) generatePassword(n int) {
 	res := make([]rune, n)
 	for i := range res {
 		res[i] = letterRunes[rand.IntN(len(letterRunes))]
 	}
-	acc.password = string(res)
+	acc.Password = string(res)
 }
 
-func NewAccountWithTimeStamp(login, password, urlString string) (*accountWithTimeStamp, error) {
+// NewAccount создает новую учетную запись с временными метками
+// Параметры:
+//   - login: строка логина (не может быть пустой)
+//   - password: строка пароля (если пустая, будет сгенерирован)
+//   - urlString: строка URL (должна быть валидным URI)
+//
+// Возвращает:
+//   - *Account: указатель на созданную учетную запись
+//   - error: ошибку, если входные данные некорректны
+func NewAccount(login, password, urlString string) (*Account, error) {
 	if login == "" {
 		return nil, errors.New("INVALID_LOGIN")
 	}
@@ -43,14 +56,12 @@ func NewAccountWithTimeStamp(login, password, urlString string) (*accountWithTim
 	if err != nil {
 		return nil, errors.New("INVALID_URL")
 	}
-	newAcc := &accountWithTimeStamp{
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		Account: Account{
-			url:      urlString,
-			login:    login,
-			password: password,
-		},
+	newAcc := &Account{
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		URL:       urlString,
+		Login:     login,
+		Password:  password,
 	}
 	if password == "" {
 		newAcc.generatePassword(12)
