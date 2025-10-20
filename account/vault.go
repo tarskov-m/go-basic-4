@@ -1,3 +1,4 @@
+// Package account
 package account
 
 import (
@@ -5,10 +6,13 @@ import (
 	"strings"
 	"time"
 
-	"demo/password/files"
-
 	"github.com/fatih/color"
 )
+
+type DB interface {
+	Read() ([]byte, error)
+	Write([]byte)
+}
 
 type Vault struct {
 	Accounts  []Account `json:"accounts"`
@@ -17,10 +21,10 @@ type Vault struct {
 
 type VaultWithDB struct {
 	Vault
-	DB files.JSONDB
+	DB DB
 }
 
-func NewVault(db *files.JSONDB) *VaultWithDB {
+func NewVault(db DB) *VaultWithDB {
 	file, err := db.Read()
 	if err != nil {
 		return &VaultWithDB{
@@ -28,7 +32,7 @@ func NewVault(db *files.JSONDB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			DB: *db,
+			DB: db,
 		}
 	}
 	var vault Vault
@@ -40,12 +44,12 @@ func NewVault(db *files.JSONDB) *VaultWithDB {
 				Accounts:  []Account{},
 				UpdatedAt: time.Now(),
 			},
-			DB: *db,
+			DB: db,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
-		DB:    *db,
+		DB:    db,
 	}
 }
 
