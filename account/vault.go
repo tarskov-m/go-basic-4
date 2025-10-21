@@ -6,6 +6,8 @@ import (
 	"strings"
 	"time"
 
+	"demo/password/output"
+
 	"github.com/fatih/color"
 )
 
@@ -106,7 +108,7 @@ func (vault *VaultWithDB) save() {
 	vault.UpdatedAt = time.Now()
 	data, err := vault.Vault.ToBytes()
 	if err != nil {
-		color.Red("Не удалось преобразовать")
+		output.PrintError(err)
 	}
 	vault.DB.Write(data)
 }

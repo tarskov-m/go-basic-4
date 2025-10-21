@@ -5,6 +5,7 @@ import (
 
 	"demo/password/account"
 	"demo/password/files"
+	"demo/password/output"
 
 	"github.com/fatih/color"
 )
@@ -44,7 +45,7 @@ func findAccount(vault *account.VaultWithDB) {
 	url := promptData("Введите URL")
 	accaunts := vault.FindAccountsByURL(url)
 	if len(accaunts) == 0 {
-		color.Red("Не найдено")
+		output.PrintError("Не найдено")
 	}
 	for _, account := range accaunts {
 		account.Output()
@@ -56,7 +57,7 @@ func deleteAccount(vault *account.VaultWithDB) {
 	if vault.DeleteAccountByURL(url) {
 		color.Green("Удалено")
 	} else {
-		color.Red("Не найдено")
+		output.PrintError("Не найдено")
 	}
 }
 
@@ -76,7 +77,7 @@ func createAccount(vault *account.VaultWithDB) {
 	url := promptData("Введите URL")
 	myAccount, err := account.NewAccount(login, password, url)
 	if err != nil {
-		fmt.Println("Неверный формат URL или Логин")
+		output.PrintError("Неверный формат URL или Логин")
 		return
 	}
 	vault.AddAccount(*myAccount)

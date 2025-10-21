@@ -2,6 +2,7 @@
 package files
 
 import (
+	"demo/password/output"
 	"fmt"
 	"os"
 )
@@ -20,9 +21,9 @@ func (db JSONDB) Read() ([]byte, error) {
 	data, err := os.ReadFile(db.filename)
 	if err != nil {
 		if err == os.ErrNotExist {
-			fmt.Println("Файл не найден")
+			output.PrintError("Файл не найден")
 		} else {
-			fmt.Println(err)
+			output.PrintError(err)
 		}
 		return nil, err
 	}
@@ -32,13 +33,13 @@ func (db JSONDB) Read() ([]byte, error) {
 func (db JSONDB) Write(content []byte) {
 	file, err := os.Create(db.filename)
 	if err != nil {
-		fmt.Println(err)
+		output.PrintError(err)
 		return
 	}
 	defer file.Close()
 	_, err = file.Write(content)
 	if err != nil {
-		fmt.Println(err)
+		output.PrintError(err)
 		return
 	}
 	fmt.Println("Запись успешна")
