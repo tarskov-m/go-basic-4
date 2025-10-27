@@ -13,8 +13,9 @@ import (
 
 var menu = map[string]func(*account.VaultWithDB){
 	"1": createAccount,
-	"2": findAccount,
-	"3": deleteAccount,
+	"2": findAccountByURL,
+	"3": findAccountByLogin,
+	"4": deleteAccount,
 }
 
 func main() {
@@ -24,9 +25,10 @@ Menu:
 	for {
 		variant := promptData([]string{
 			"1. Создать аккаунт",
-			"2. Найти аккаунт",
-			"3. Удалить аккаунт",
-			"4. Выход",
+			"2. Найти аккаунт по URL",
+			"3. Найти аккаунт по логину",
+			"4. Удалить аккаунт",
+			"5. Выход",
 			"Выберите вариант",
 		})
 		funcMenu := menu[variant]
@@ -47,19 +49,31 @@ Menu:
 	}
 }
 
-func findAccount(vault *account.VaultWithDB) {
+func findAccountByURL(vault *account.VaultWithDB) {
 	url := promptData([]string{"Введите URL"})
-	accaunts := vault.FindAccounts(url, checkURL)
-	if len(accaunts) == 0 {
-		output.PrintError("Не найдено")
-	}
-	for _, account := range accaunts {
-		account.Output()
-	}
+	accaunts := vault.FindAccounts(url, func(account account.Account, str string) bool {
+		return strings.Contains(account.URL, str)
+	})
+
+	outputResult(&accaunts)
 }
 
-func checkURL(account account.Account, str string) bool {
-	return strings.Contains(account.URL, str)
+func findAccountByLogin(vault *account.VaultWithDB) {
+	login := promptData([]string{"Введите логин"})
+	accaunts := vault.FindAccounts(login, func(account account.Account, str string) bool {
+		return strings.Contains(account.Login, str)
+	})
+
+	outputResult(&accaunts)
+}
+
+func outputResult(accaunts *[]account.Account) {
+	if len(*accaunts) == 0 {
+		output.PrintError("Не найдено")
+	}
+	for _, account := range *accaunts {
+		account.Output()
+	}
 }
 
 func deleteAccount(vault *account.VaultWithDB) {
