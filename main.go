@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strings"
 
 	"demo/password/account"
 	"demo/password/files"
@@ -48,13 +49,17 @@ Menu:
 
 func findAccount(vault *account.VaultWithDB) {
 	url := promptData([]string{"Введите URL"})
-	accaunts := vault.FindAccountsByURL(url)
+	accaunts := vault.FindAccounts(url, checkURL)
 	if len(accaunts) == 0 {
 		output.PrintError("Не найдено")
 	}
 	for _, account := range accaunts {
 		account.Output()
 	}
+}
+
+func checkURL(account account.Account, str string) bool {
+	return strings.Contains(account.URL, str)
 }
 
 func deleteAccount(vault *account.VaultWithDB) {
