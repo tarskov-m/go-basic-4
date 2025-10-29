@@ -6,6 +6,7 @@ import (
 	"strings"
 	"time"
 
+	"demo/password/encrypter"
 	"demo/password/output"
 
 	"github.com/fatih/color"
@@ -32,9 +33,10 @@ type Vault struct {
 type VaultWithDB struct {
 	Vault
 	DB DB
+	enc encrypter.Encrypter
 }
 
-func NewVault(db DB) *VaultWithDB {
+func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 	file, err := db.Read()
 	if err != nil {
 		return &VaultWithDB{
@@ -43,6 +45,7 @@ func NewVault(db DB) *VaultWithDB {
 				UpdatedAt: time.Now(),
 			},
 			DB: db,
+			enc: enc,
 		}
 	}
 	var vault Vault
@@ -55,11 +58,13 @@ func NewVault(db DB) *VaultWithDB {
 				UpdatedAt: time.Now(),
 			},
 			DB: db,
+			enc: enc,
 		}
 	}
 	return &VaultWithDB{
 		Vault: vault,
 		DB:    db,
+		enc:   enc,
 	}
 }
 
