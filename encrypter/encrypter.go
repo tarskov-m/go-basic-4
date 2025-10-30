@@ -1,7 +1,13 @@
 // Package encrypter
 package encrypter
 
-import "os"
+import (
+	"crypto/aes"
+	"crypto/cipher"
+	"crypto/rand"
+	"io"
+	"os"
+)
 
 type Encrypter struct {
 	Key string
@@ -17,10 +23,23 @@ func NewEncrypter() *Encrypter {
 	}
 }
 
-func (e *Encrypter) encrypt(plainStr string) string {
-	return ""
+func (e *Encrypter) encrypt(plainStr []byte) []byte {
+	block, err := aes.NewCipher([]byte(e.Key))
+	if err != nil {
+		panic(err.Error())
+	}
+	aesGSM, err := cipher.NewGCM(block)
+	if err != nil {
+		panic(err.Error())
+	}
+	nonce := make([]byte, aesGSM.NonceSize())
+	_, err = io.ReadFull(rand.Reader, nonce)
+	if err != nil {
+		panic(err.Error())
+	}
+	return aesGSM.Seal(nonce, nonce, plainStr, nil)
 }
 
-func (e *Encrypter) decrypt(encryptedStr string) string {
+func (e *Encrypter) decrypt(encryptedStr []byte) string {
 	return ""
 }
