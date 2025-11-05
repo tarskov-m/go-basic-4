@@ -22,9 +22,7 @@ func (db JSONDB) Read() ([]byte, error) {
 	if err != nil {
 		if err == os.ErrNotExist {
 			output.PrintError("Файл не найден")
-		} else {
-			output.PrintError(err)
-		}
+		} 
 		return nil, err
 	}
 	return data, nil

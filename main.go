@@ -26,7 +26,7 @@ func main() {
 	if err != nil {
 		output.PrintError("Ошибка при загрузке файла .env")
 	}
-	vault := account.NewVault(files.NewJSONDB("data.json"), *encrypter.NewEncrypter())
+	vault := account.NewVault(files.NewJSONDB("data.vault"), *encrypter.NewEncrypter())
 Menu:
 	for {
 		variant := promptData(

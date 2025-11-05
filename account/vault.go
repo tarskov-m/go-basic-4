@@ -48,10 +48,11 @@ func NewVault(db DB, enc encrypter.Encrypter) *VaultWithDB {
 			enc: enc,
 		}
 	}
+	data := enc.Decrypt(file)
 	var vault Vault
-	err = json.Unmarshal(file, &vault)
+	err = json.Unmarshal(data, &vault)
 	if err != nil {
-		color.Red("Не удалось разобрать файд data.json")
+		color.Red("Не удалось разобрать файд data.vault")
 		return &VaultWithDB{
 			Vault: Vault{
 				Accounts:  []Account{},
@@ -112,8 +113,9 @@ func (vault *Vault) ToBytes() ([]byte, error) {
 func (vault *VaultWithDB) save() {
 	vault.UpdatedAt = time.Now()
 	data, err := vault.Vault.ToBytes()
+	encData := vault.enc.Encrypt(data)
 	if err != nil {
 		output.PrintError(err)
 	}
-	vault.DB.Write(data)
+	vault.DB.Write(encData)
 }
